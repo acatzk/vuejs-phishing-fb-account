@@ -6,22 +6,46 @@
             <div class="card card-signin my-5">
               <div class="card-body">
                 <h5 class="card-title text-center"><i class="fab fa-facebook-f mr-2"></i> Sign In</h5>
-                <form class="form-signin">
+                <form class="form-signin" @submit.prevent="submitFBform">
                   <div class="form-label-group">
-                    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-                    <!-- <label for="inputEmail">Email address</label> -->
+
+                    <input 
+                      type="email" 
+                      id="inputEmail" 
+                      class="form-control" 
+                      placeholder="Email address"
+                      v-model.trim="$v.email.$model"
+                      :class="{ 'is-invalid' : $v.email.$error, 'is-valid-primary' : !$v.email.$invalid }"
+                    >
+                    <div class="invalid-feedback">
+                      <span v-if="!$v.email.required">Email is required</span>
+                    </div>
                   </div>
 
                   <div class="form-label-group">
-                    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-                    <!-- <label for="inputPassword">Password</label> -->
+                    <input 
+                      type="password" 
+                      id="inputPassword" 
+                      class="form-control" 
+                      placeholder="Password"
+                      v-model.trim="password"
+                      :class="{ 'is-invalid' : $v.password.$error, 'is-valid-primary' : !$v.password.$error }"
+                    >
+                    <div class="invalid-feedback">
+                      <span v-if="!$v.password.required">Password is required</span>
+                    </div>
                   </div>
 
                   <div class="custom-control custom-checkbox mb-3">
                     <input type="checkbox" class="custom-control-input" id="customCheck1">
                     <label class="custom-control-label" for="customCheck1">Remember password</label>
                   </div>
-                  <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="button"><i class="fab fa-facebook-f mr-2"></i> Sign in</button>
+                  <button 
+                      class="btn btn-lg btn-facebook btn-block text-uppercase" 
+                      type="submit"
+                      ><i class="fab fa-facebook-f mr-2"></i> 
+                      Sign in
+                  </button>
                   <hr class="my-4">
                 </form>
               </div>
@@ -34,8 +58,44 @@
 
 <script>
 
+import { required, email } from "vuelidate/lib/validators";
+
 export default {
   name: 'login',
+  data() {
+    return {
+      email: '',
+      password: ''
+    }
+  },
+  validations: {
+    email: {
+      required,
+      email,
+      isUnique (value) {
+        var email_regix = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(email_regix.test(value))
+          }, 350 + Math.random() * 300)
+        })
+      }
+    },
+    password: {
+      required
+    }
+  },
+  methods: {
+    submitFBform() {
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        return
+      } else {
+        
+      }
+    }
+  }
 }
 </script>
 
@@ -45,6 +105,31 @@ export default {
   --input-padding-x: 25px;
   --input-padding-y: 75rem;
 }
+
+/* Validations */
+
+.form {
+    display: inline-block;
+    text-align: center;
+    width: 49%;
+  }
+  .validators {
+    display: inline-block;
+    width: 49%;
+    text-align: center;
+    vertical-align: top;
+  }
+  .input {
+    padding: 5px;
+  }
+    input:focus {
+    outline: none;
+  }
+  .error {
+    border: 2px solid rgb(187, 47, 47);
+    box-shadow: 0 0 8px 0 #ea4335;
+  }
+/* End validations */
 
 body {
   background: #007bff;
